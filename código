@@ -1,0 +1,138 @@
+#include <stdio.h>
+
+#define ROWS 5 // número de fileiras 
+#define COLS 8 // número de colunas
+
+void mostrarlugares(int lugares[ROWS][COLS]) {
+    printf("Lugares disponíveis (0 = disponível, x = ocupado):\n");
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            printf("%c ", lugares[i][j] == 0 ? '0' : 'x');
+        }
+        printf("\n");
+    }
+}
+
+void escolherlugar(int lugares[ROWS][COLS], int *valortotal) {
+    int row, col;
+    char opcoes;
+
+    do {
+        mostrarlugares(lugares);
+        printf("Digite o número da fileira (1-%d): ", ROWS);
+        scanf("%d", &row);
+        printf("Digite o número da coluna (1-%d): ", COLS);
+        scanf("%d", &col);
+
+        
+        row--;
+        col--;
+
+        if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+            if (lugares[row][col] == 0) {
+                lugares[row][col] = 'x';
+                *valortotal += 50; 
+                printf("Lugar reservado com sucesso!\n");
+            } else {
+                printf("Este lugar já está ocupado!\n");
+            }
+        } else {
+            printf("Lugar inválido!\n");
+        }
+
+        printf("Deseja reservar outro lugar? (s/n): ");
+        scanf(" %c", &opcoes);
+    } while(opcoes == 's' || opcoes == 'S');
+
+    printf("Reserva finalizada. Aqui está a disposição final:\n");
+    mostrarlugares(lugares);
+}
+
+void trocarlugar(int lugares[ROWS][COLS]) {
+    int row, col, newrow, newcol;
+
+    printf("Escolha o lugar atual (linha e coluna): ");
+    scanf("%d %d", &row, &col);
+
+    
+    row--;
+    col--;
+
+    if (row >= 0 && row < ROWS && col >= 0 && col < COLS && lugares[row][col] == 'x') {
+        printf("Digite o novo número da fileira (1-%d): ", ROWS);
+        scanf("%d", &newrow);
+        printf("Digite o novo número da coluna (1-%d): ", COLS);
+        scanf("%d", &newcol);
+
+        
+        newrow--;
+        newcol--;
+
+        if (newrow >= 0 && newrow < ROWS && newcol >= 0 && newcol < COLS && lugares[newrow][newcol] == 0) {
+            lugares[row][col] = 0;
+            lugares[newrow][newcol] = 'x';
+            printf("Lugar trocado com sucesso!\n");
+        } else {
+            printf("O novo lugar já está ocupado ou é inválido!\n");
+        }
+    } else {
+        printf("Este lugar não está ocupado ou é inválido!\n");
+    }
+}
+
+void cancelarlugar(int lugares[ROWS][COLS], int *valortotal) {
+    int row, col;
+    printf("Escolha o lugar para ser cancelado (linha e coluna): ");
+    scanf("%d %d", &row, &col);
+
+    // Ajustando índices para começar de 0
+    row--;
+    col--;
+
+    if (row >= 0 && row < ROWS && col >= 0 && col < COLS && lugares[row][col] == 'x') {
+        lugares[row][col] = 0;
+        *valortotal -= 50;
+        printf("Lugar cancelado com sucesso!\n");
+    } else {
+        printf("Este lugar já está disponível ou é inválido!\n");
+    }
+}
+
+int main() {
+    int lugares[ROWS][COLS] = {0};
+    int valortotal = 0;
+    int opcao;
+
+    do {
+        printf("\n--- Bilheteria do Teatro Zumbi dos Jantares ---\n");
+        printf("1. Mostrar lugares disponíveis\n");
+        printf("2. Escolher lugar\n");
+        printf("3. Trocar lugar\n");
+        printf("4. Cancelar lugar\n");
+        printf("5. Finalizar compra\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                mostrarlugares(lugares);
+                break;
+            case 2:
+                escolherlugar(lugares, &valortotal);
+                break;
+            case 3:
+                trocarlugar(lugares);
+                break;
+            case 4:
+                cancelarlugar(lugares, &valortotal);
+                break;
+            case 5:
+                printf("Compra finalizada. Valor total: R$%d\n", valortotal);
+                break;
+            default:
+                printf("Opção inválida!\n");
+        }
+    } while (opcao != 5);
+
+    return 0;
+}
